@@ -1,0 +1,25 @@
+---
+description: Xenasys listing + form UI pattern from Category Listing / Add Category screens — navy shell, blue accent, right drawer forms, no green.
+globs: frontend/**/*.{tsx,ts,css}
+alwaysApply: false
+---
+
+# Xenasys Listing & Form UI Pattern
+
+**Visual SSoT:** `Requirements/documents/Xenasys_Listing_Form_UI_Pattern.md`  
+**Validation SSoT:** `Requirements/documents/Xenasys_UI_Validation_Plan.md`  
+**Tokens:** `frontend/src/app/globals.css` · `frontend/src/lib/forms/field-styles.ts`
+
+## Hard rules
+
+1. **No emerald / green** for buttons, focus rings, success chrome, or borders. Primary = `#2563EB`. Danger/validation = `#DC2626`.
+2. **Listings** follow Category Listing: breadcrumb → bold title → subtitle → Export (secondary) + Add (primary) → white data card → table with horizontal dividers only → row icon actions (view blue / edit slate / delete red) → pagination with blue active page.
+3. **Forms** follow Add Category: **right slide-over drawer** + dim overlay; labels with red `*` for required; light gray input borders; blue focus ring; dashed soft-blue upload zone; footer Cancel (outline) + Save (solid blue).
+4. Prefer shared helpers: `btnPrimaryClass`, `btnSecondaryClass`, `inputClass`, `panelClass`, `Alert` — do not invent one-off green CTAs.
+5. Code comments stay English; user-facing chat may be Roman English.
+
+## When building a new module page
+
+- Do **not** ship full-page create forms if the mock uses a drawer — implement `SideDrawer`.
+- Do **not** put primary actions in emerald Tailwind classes (`bg-emerald-*`, `focus:border-emerald-*`).
+- Match shell: sidebar navy `#0B1B33`, canvas `#F5F7FB`, active nav `#2563EB`.

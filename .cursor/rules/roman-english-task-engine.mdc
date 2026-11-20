@@ -1,0 +1,26 @@
+---
+description: Roman English/Urdu prompt parsing + Roman reply style; code stays English
+alwaysApply: true
+---
+
+# Roman English Task Processing Engine
+
+User development tasks, bugs, features, and refactors may arrive primarily in **Roman English / Roman Urdu**. Decode them into precise technical work without losing architectural accuracy.
+
+## Language parsing
+
+- Translate Roman Urdu into exact implementation tokens before editing.
+  - `"is table ko change kro"` → EF Core Fluent API / SQL constraints / migrations
+  - `"is field par red warning dikhao"` → RHF + Zod field error chrome `#DC2626`
+  - `"joins check kro conflict to nahi"` → FK/unique/CHECK and join correctness
+- Keep multi-tenant, performance, and data-dictionary rules as the source of truth when phrasing is informal.
+
+## Response style
+
+- Reply to the user in clear, professional, concise **Roman English/Urdu**.
+- Keep **all source code** and **inline documentation comments** in strict **enterprise English** (including WHAT/WHY/EXAMPLE banners).
+
+## Architectural integrity
+
+- Do not weaken: `<1s` click targets, JWT-only tenant isolation (`tenant_id` → `ITenantProvider`), inbound `company_id` wire key, keyset pagination, async EF/HTTP, PascalCase SQL naming.
+- Before executing work, cross-reference `Requirements/documents/Xenasys_Task_Matrix.md` and append the audit-log row per `.cursorrules` Agent Workflow.

@@ -1,0 +1,142 @@
+# Xenasys Marketplace — Cursor Agent Rules
+
+You are working in the **Xenasys Multi-Tenant Marketplace** monorepo (`backend/` .NET Clean Architecture, `frontend/` Next.js App Router).
+
+## Critical gate (do this first)
+
+Before ANY code change:
+
+1. Read `Xenasys_Task_Matrix.md` and run the conflict check.
+2. Append a Regression Compliance Audit Log row **before coding**.
+3. If the change would bypass tenant isolation, COA triggers, SKU/subsidiary transactions, price/NTN constraints, or introduce OFFSET hot-path paging → **STOP** and raise an architectural exception.
+
+Also respect: `Xenasys_Implementation_Sequence.md`, `Xenasys_Database_Design.md`, `Xenasys_UI_Validation_Plan.md`, `Xenasys_Listing_Form_UI_Pattern.md`, `Xenasys_API_Specification.md`, `Xenasys_Redis_Cache_Architecture.md`, `Xenasys_Testing_Sanity_Matrix.md`.
+
+### Frontend UI chrome (listing + forms)
+
+- **Listing** and **form** pages MUST follow Category Listing / Add Category drawer screens documented in `Xenasys_Listing_Form_UI_Pattern.md`.
+- Primary accent `#2563EB`; validation/delete `#DC2626`; **no emerald/green** CTAs or focus rings.
+- Forms default to **right slide-over drawer** + overlay; listings use white data card + horizontal table rules + Export secondary / Add primary.
+- Shared tokens: `frontend/src/lib/forms/field-styles.ts` + `frontend/src/app/globals.css`.
+
+---
+
+## Backend (.NET) — Clean Architecture
+
+### Project boundaries
+
+| Project | May reference | Must not |
+|---------|---------------|----------|
+| `Xenasys.Core` | Nothing infra | EF, ASP.NET, Redis, HTTP |
+| `Xenasys.Persistence` | Core | Presentation UI concerns |
+| `Xenasys.Infrastructure` | Core | Controllers / page models |
+| `Xenasys.Presentation` | Core, Infra, Persistence | Domain logic in controllers beyond orchestration |
+
+- Domain entities, contracts, and abstractions live in **Core**.
+- EF `ApplicationDbContext`, configurations, migrations → **Persistence**.
+- JWT tenant resolution, Redis, external services → **Infrastructure**.
+- Controllers stay thin: validate → call service/handler → map envelope.
+
+### Async / await (mandatory)
+
+- All I/O (EF, Redis, HTTP, file, email outbox dequeue) **MUST** use `async`/`await` with `CancellationToken` plumbed from the request.
+- **Banned:** `.Result`, `.Wait()`, `GetAwaiter().GetResult()`, `Task.Run` wrapping EF, sync-over-async in middleware.
+- Prefer `ToListAsync`, `FirstOrDefaultAsync`, `SaveChangesAsync`, `await foreach` for streams.
+- Background work (alerts, cache warm) goes to outbox/hosted services — **not** the HTTP request path.
+
+### Multi-tenancy (non-negotiable)
+
+- Resolve `company_id` / `tenant_id` **only** from validated JWT → `ITenantProvider`.
+- **Never** trust client body/query `companyId` for isolation.
+- Tenant-scoped queries rely on EF global filters; Super Admin cross-tenant reads use explicit `IgnoreQueryFilters` + authorization + audit.
+
+### Data integrity
+
+- Product/Vendor create: **single DB transaction** for entity + `subsidiary_accounts` insert.
+- Do not soft-disable CHECK `retail_price >= invoice_price` or NTN mask `^[0-9]{7}-[0-9]{1}$`.
+- FK deletes default **RESTRICT** for catalog/COA/product links (see Database Design).
+
+---
+
+## Frontend (Next.js / TypeScript)
+
+### Strict boundaries
+
+- `strict` TypeScript; no `any` on API contracts — use shared types matching .NET DTOs.
+- Server Components for page shells; Client Components for forms, virtualized lists, query hooks.
+- Forms: React Hook Form + Zod per `Xenasys_UI_Validation_Plan.md` (`mode: "onBlur"`, `reValidateMode: "onChange"`, submit guard).
+- Validation error chrome: `#DC2626` (`text-red-600` / `border-red-600`).
+- Map HTTP **422** field errors via `setError`; do not swallow them.
+
+### Data fetching
+
+- TanStack Query for client data; long `staleTime` for master catalogs (categories/tenant).
+- Large lists: **@tanstack/react-virtual** — viewport rows only.
+- API client injects JWT; never send `company_id` as the source of truth for authz.
+
+---
+
+## Pagination — absolute ban on OFFSET for hot paths
+
+**Banned on hot-path list endpoints** (products, vendors, subsidiaries, stock movements, category lists at scale):
+
+```text
+OFFSET / FETCH NEXT
+Skip().Take() page-number patterns that translate to OFFSET
+```
+
+**Required:** keyset / cursor pagination:
+
+```http
+GET /api/products?afterId={guid}&limit={n}
+```
+
+```csharp
+query.Where(x => x.Id.CompareTo(afterId) > 0)
+     .OrderBy(x => x.Id)
+     .Take(limit + 1);
+```
+
+Indexes must support `(company_id, id)` seeks. Super Admin rollups use materialized summaries — not deep OFFSET.
+
+---
+
+## API responses
+
+Follow `Xenasys_API_Specification.md` envelopes for success, 422 validation, and 401 unauthorized.
+
+## Cache
+
+Follow `Xenasys_Redis_Cache_Architecture.md` for key design and mutation invalidation. Cache is additive; tenant isolation still enforced at DB.
+
+## Testing
+
+New tenant-scoped endpoints need isolation coverage per `Xenasys_Testing_Sanity_Matrix.md`.
+
+## Style
+
+- Match existing file patterns; minimal diffs; no drive-by refactors.
+- Do not commit secrets; use configuration / user secrets.
+- Prefer focused PRs aligned to Task Matrix IDs (e.g. `0.3`, `1.5`).
+
+---
+
+## Roman English Task Processing Engine (mandatory)
+
+User prompts may be issued primarily in **Roman English / Roman Urdu**. Decode intent with full technical accuracy; do not dilute architecture because the prompt language changed.
+
+### Language parsing
+
+- Map Roman Urdu phrases to precise implementation tokens before coding.
+  - Examples: `"is table ko change kro"` → EF Fluent API / SQL DDL / migrations; `"is field par red warning dikhao"` → Zod/RHF `#DC2626` field errors; `"joins check kro conflict to nahi"` → FK/unique/CHECK constraints and query joins.
+- Prefer concrete artifacts (files, columns, DTOs, policies) over vague paraphrases.
+
+### Response style protocol
+
+- **Chat / explanations to the user:** clear, professional, concise **Roman English/Urdu**.
+- **Source code** (C#, TypeScript, SQL migrations) and **inline documentation comments** (WHAT/WHY/EXAMPLE banners): always **enterprise-grade English**.
+
+### Architectural integrity (unchanged)
+
+- Never compromise `<1s` click targets, multi-tenant JWT isolation (`tenant_id` → `ITenantProvider`), PascalCase data dictionary, keyset pagination, or async I/O rules because the task was phrased in Roman English.
+- Before executing any Roman English (or English) development command, cross-reference `Requirements/documents/Xenasys_Task_Matrix.md` and append the audit-log row per the Agent Workflow rules above.

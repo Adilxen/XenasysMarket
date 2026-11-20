@@ -1,0 +1,37 @@
+---
+description: Complete module delivery from Company gold standard — DB + API + FE
+alwaysApply: true
+---
+
+# Complete Module Delivery (Company Gold Standard)
+
+When the user shares a **module name** plus **minimum details** (fields, CRUD roles, optional auto-code / FKs), deliver a **complete module**: Database + API + Frontend — not a partial slice — unless they explicitly ask for one layer only.
+
+## Source of truth
+
+1. `Requirements/documents/Xenasys_Complete_Module_Delivery_Contract.md` — delivery checklist + Company inventory  
+2. `Requirements/documents/Xenasys_Company_Module_Micro_Pin_Playbook.md` — micro-pins to clone  
+3. `Requirements/documents/Xenasys_Task_Matrix.md` — append audit-log row before coding  
+
+## Minimum user input (enough to start)
+
+- Module UI name  
+- Field list (name, type, required)  
+- Who can create/read/update/delete  
+- Optional: auto-code, soft vs hard delete, parent FK, unique rules  
+
+Do **not** wait for screen mockups if Category/Company pattern already covers the UX.
+
+## Must clone from Company
+
+- Viewport-locked listing (`fill` + sticky pagination)  
+- DataTable spreadsheet: no `#` column; header filters + asc/desc  
+- SideDrawer create/view/edit; RHF+Zod; disabled View chrome  
+- `ConfirmDialog` for delete (soft `IsActive=false` by default)  
+- Claims + `ClaimGate`; active-only + `shape=list|detail` APIs  
+- Audit columns last; `AuditClock` PKT; UI business names (no DB jargon)  
+- EF Core LINQ (not SPs) unless user explicitly requires stored procedures  
+
+## Persistence note
+
+Xenasys Company baseline uses EF Core, not application stored procedures. Default new modules the same way.
