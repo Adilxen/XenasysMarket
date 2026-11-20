@@ -1,0 +1,37 @@
+{
+  "loginSnapshot": {
+    "title": "Login",
+    "hasBrandAside": true,
+    "brandVisible": true,
+    "iso": false,
+    "ssl": false,
+    "hasCompanyControl": true,
+    "inputs": [
+      {
+        "type": "text",
+        "placeholder": "Adil Raza",
+        "autocomplete": "username"
+      },
+      {
+        "type": "password",
+        "placeholder": "••••••••",
+        "autocomplete": "current-password"
+      }
+    ],
+    "formWidth": 400,
+    "h1Font": "Manrope, \"Manrope Fallback\"",
+    "h1Size": "42px",
+    "bodyBg": "rgb(255, 255, 255)",
+    "rightBg": "rgb(248, 249, 251)"
+  },
+  "consoleErrors": [],
+  "pageErrors": [],
+  "findings": [],
+  "shots": [
+    "01-login.png",
+    "02-login-filled.png",
+    "03-dashboard.png",
+    "04-dashboard-profile-menu.png",
+    "05-products.png"
+  ]
+}

@@ -1,0 +1,215 @@
+Using launch settings from .\src\Xenasys.Presentation\Properties\launchSettings.json...
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Applying EF Core migrations…
+warn: Microsoft.EntityFrameworkCore.Model.Validation[10400]
+      Sensitive data logging is enabled. Log entries and exception messages may include sensitive application data; this mode should only be enabled during development.
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (33ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (24ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      DECLARE @result int;
+      EXEC @result = sp_getapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session', @LockMode = 'Exclusive';
+      SELECT @result
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+      BEGIN
+          CREATE TABLE [__EFMigrationsHistory] (
+              [MigrationId] nvarchar(150) NOT NULL,
+              [ProductVersion] nvarchar(32) NOT NULL,
+              CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+          );
+      END;
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (0ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT 1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT [MigrationId], [ProductVersion]
+      FROM [__EFMigrationsHistory]
+      ORDER BY [MigrationId];
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (2ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      DECLARE @result int;
+      EXEC @result = sp_releaseapplock @Resource = '__EFMigrationsLock', @LockOwner = 'Session';
+      SELECT @result
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Running database seed engine…
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [u].[Id], [u].[Email], [u].[InsertDate], [u].[InsertUserId], [u].[IsActive], [u].[IsSuperAdmin], [u].[PasswordHash], [u].[UpdateDate], [u].[UpdateUserId], [u].[UserName]
+      FROM [users] AS [u]
+      WHERE [u].[UserName] = N'superadmin'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (14ms) [Parameters=[@p0='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p1='superadmin@xenasys.local' (Size = 256), @p2='2026-09-11T07:21:40.7533688Z', @p3='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p4='True', @p5='True', @p6='$2a$12$3sqkNLFj3NDce.COrg5nJuYEKPuhB1TAC5//GxbME/.5NCrqBHXAy' (Nullable = false) (Size = 200), @p7=NULL (DbType = DateTime2), @p8=NULL (DbType = Guid), @p9='superadmin' (Nullable = false) (Size = 50)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [users] ([Id], [Email], [InsertDate], [InsertUserId], [IsActive], [IsSuperAdmin], [PasswordHash], [UpdateDate], [UpdateUserId], [UserName])
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Seeded Super Admin 'superadmin' Id=01a08f57-f3d6-7caf-99d4-5fb49cda1dd1
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [t].[Id], [t].[Code], [t].[ContactEmail], [t].[ContactPhone], [t].[InsertDate], [t].[InsertUserId], [t].[IsActive], [t].[Name], [t].[UpdateDate], [t].[UpdateUserId]
+      FROM [tenants] AS [t]
+      WHERE [t].[Code] = N'MASTER'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='01a08f57-f6fc-7a22-bce4-ebddc9d3788b', @p1='MASTER' (Nullable = false) (Size = 50), @p2='platform@xenasys.local' (Size = 256), @p3=NULL (Size = 30), @p4='2026-09-11T07:21:40.7533688Z', @p5='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p6='True', @p7='Xenasys Master Tenant' (Nullable = false) (Size = 200), @p8=NULL (DbType = DateTime2), @p9=NULL (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [tenants] ([Id], [Code], [ContactEmail], [ContactPhone], [InsertDate], [InsertUserId], [IsActive], [Name], [UpdateDate], [UpdateUserId])
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Seeded master tenant MASTER Id=01a08f57-f6fc-7a22-bce4-ebddc9d3788b
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [roles] AS [r]
+              WHERE [r].[Code] = N'SUPER_ADMIN' AND [r].[CompanyId] IS NULL) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@masterTenantId='01a08f57-f6fc-7a22-bce4-ebddc9d3788b' (Nullable = true)], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [roles] AS [r]
+              WHERE [r].[Code] = N'TENANT_ADMIN' AND [r].[CompanyId] = @masterTenantId) THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='01a08f57-f746-71c6-bf7c-eb1e4a2f77e2', @p1='SUPER_ADMIN' (Nullable = false) (Size = 50), @p2=NULL (DbType = Guid), @p3='2026-09-11T07:21:40.7533688Z', @p4='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p5='True', @p6='Super Admin' (Nullable = false) (Size = 100), @p7=NULL (DbType = DateTime2), @p8=NULL (DbType = Guid), @p9='01a08f57-f76c-7bc6-bb17-eeac6eed0468', @p10='TENANT_ADMIN' (Nullable = false) (Size = 50), @p11='01a08f57-f6fc-7a22-bce4-ebddc9d3788b' (Nullable = true), @p12='2026-09-11T07:21:40.7533688Z', @p13='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p14='True', @p15='Tenant Administrator' (Nullable = false) (Size = 100), @p16=NULL (DbType = DateTime2), @p17=NULL (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [roles] ([Id], [Code], [CompanyId], [InsertDate], [InsertUserId], [IsSystem], [Name], [UpdateDate], [UpdateUserId])
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8),
+      (@p9, @p10, @p11, @p12, @p13, @p14, @p15, @p16, @p17);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(2) [r].[Id], [r].[Code], [r].[CompanyId], [r].[InsertDate], [r].[InsertUserId], [r].[IsSystem], [r].[Name], [r].[UpdateDate], [r].[UpdateUserId]
+      FROM [roles] AS [r]
+      WHERE [r].[Code] = N'SUPER_ADMIN' AND [r].[CompanyId] IS NULL
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@superAdminUserId='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1'], CommandType='Text', CommandTimeout='30']
+      SELECT [u].[Id], [u].[CompanyId], [u].[InsertDate], [u].[InsertUserId], [u].[IsActive], [u].[RoleId], [u].[UpdateDate], [u].[UpdateUserId], [u].[UserId]
+      FROM [user_tenant_memberships] AS [u]
+      WHERE [u].[UserId] = @superAdminUserId AND [u].[CompanyId] IS NOT NULL
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@superAdminUserId='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1'], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [u].[Id], [u].[CompanyId], [u].[InsertDate], [u].[InsertUserId], [u].[IsActive], [u].[RoleId], [u].[UpdateDate], [u].[UpdateUserId], [u].[UserId]
+      FROM [user_tenant_memberships] AS [u]
+      WHERE [u].[UserId] = @superAdminUserId AND [u].[CompanyId] IS NULL
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Seeded Super Admin platform membership (CompanyId=NULL)
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='01a08f57-f7ba-76ec-b6fa-680e4aa0963f', @p1=NULL (DbType = Guid), @p2='2026-09-11T07:21:40.7533688Z', @p3='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p4='True', @p5='01a08f57-f746-71c6-bf7c-eb1e4a2f77e2', @p6=NULL (DbType = DateTime2), @p7=NULL (DbType = Guid), @p8='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1'], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [user_tenant_memberships] ([Id], [CompanyId], [InsertDate], [InsertUserId], [IsActive], [RoleId], [UpdateDate], [UpdateUserId], [UserId])
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@masterTenantId='01a08f57-f6fc-7a22-bce4-ebddc9d3788b' (Nullable = true)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(2) [r].[Id], [r].[Code], [r].[CompanyId], [r].[InsertDate], [r].[InsertUserId], [r].[IsSystem], [r].[Name], [r].[UpdateDate], [r].[UpdateUserId]
+      FROM [roles] AS [r]
+      WHERE [r].[Code] = N'TENANT_ADMIN' AND [r].[CompanyId] = @masterTenantId
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [u].[Id], [u].[Email], [u].[InsertDate], [u].[InsertUserId], [u].[IsActive], [u].[IsSuperAdmin], [u].[PasswordHash], [u].[UpdateDate], [u].[UpdateUserId], [u].[UserName]
+      FROM [users] AS [u]
+      WHERE [u].[UserName] = N'tenantadmin'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (5ms) [Parameters=[@p0='01a08f57-f803-7b2f-a839-69245d8f9adf', @p1='tenantadmin@xenasys.local' (Size = 256), @p2='2026-09-11T07:21:40.7533688Z', @p3='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p4='True', @p5='False', @p6='$2a$12$XTEtz2fSXqeVTtXojjqr3.cRE2iIAwiio4FKbipYzlSydz4XIU4Bu' (Nullable = false) (Size = 200), @p7=NULL (DbType = DateTime2), @p8=NULL (DbType = Guid), @p9='tenantadmin' (Nullable = false) (Size = 50)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [users] ([Id], [Email], [InsertDate], [InsertUserId], [IsActive], [IsSuperAdmin], [PasswordHash], [UpdateDate], [UpdateUserId], [UserName])
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9);
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Seeded Tenant Admin 'tenantadmin'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@user_Id='01a08f57-f803-7b2f-a839-69245d8f9adf', @masterTenantId='01a08f57-f6fc-7a22-bce4-ebddc9d3788b' (Nullable = true)], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [u].[Id], [u].[CompanyId], [u].[InsertDate], [u].[InsertUserId], [u].[IsActive], [u].[RoleId], [u].[UpdateDate], [u].[UpdateUserId], [u].[UserId]
+      FROM [user_tenant_memberships] AS [u]
+      WHERE [u].[UserId] = @user_Id AND [u].[CompanyId] = @masterTenantId
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Seeded Tenant Admin membership → company 01a08f57-f6fc-7a22-bce4-ebddc9d3788b
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='01a08f57-f967-7bc8-9700-f55e7678ff56', @p1='01a08f57-f6fc-7a22-bce4-ebddc9d3788b' (Nullable = true), @p2='2026-09-11T07:21:40.7533688Z', @p3='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p4='True', @p5='01a08f57-f76c-7bc6-bb17-eeac6eed0468', @p6=NULL (DbType = DateTime2), @p7=NULL (DbType = Guid), @p8='01a08f57-f803-7b2f-a839-69245d8f9adf'], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [user_tenant_memberships] ([Id], [CompanyId], [InsertDate], [InsertUserId], [IsActive], [RoleId], [UpdateDate], [UpdateUserId], [UserId])
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [m].[Id], [m].[Code], [m].[InsertDate], [m].[InsertUserId], [m].[IsActive], [m].[Prefix], [m].[Title], [m].[UpdateDate], [m].[UpdateUserId]
+      FROM [master_accounts] AS [m]
+      WHERE [m].[Code] = N'1000'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='01a08f57-f979-7d6c-9008-2dd0bb69b5cd', @p1='1000' (Nullable = false) (Size = 20), @p2='2026-09-11T07:21:40.7533688Z', @p3='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p4='True', @p5='AST' (Nullable = false) (Size = 5), @p6='Current Assets' (Nullable = false) (Size = 100), @p7=NULL (DbType = DateTime2), @p8=NULL (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [master_accounts] ([Id], [Code], [InsertDate], [InsertUserId], [IsActive], [Prefix], [Title], [UpdateDate], [UpdateUserId])
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT TOP(1) [m].[Id], [m].[Code], [m].[InsertDate], [m].[InsertUserId], [m].[IsActive], [m].[Prefix], [m].[Title], [m].[UpdateDate], [m].[UpdateUserId]
+      FROM [master_accounts] AS [m]
+      WHERE [m].[Code] = N'2000'
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='01a08f57-f9a4-7562-b814-200f0a101552', @p1='2000' (Nullable = false) (Size = 20), @p2='2026-09-11T07:21:40.7533688Z', @p3='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p4='True', @p5='LIA' (Nullable = false) (Size = 5), @p6='Current Liabilities' (Nullable = false) (Size = 100), @p7=NULL (DbType = DateTime2), @p8=NULL (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [master_accounts] ([Id], [Code], [InsertDate], [InsertUserId], [IsActive], [Prefix], [Title], [UpdateDate], [UpdateUserId])
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8);
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [control_accounts] AS [c]
+              WHERE [c].[ControlKind] = N'INVENTORY') THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Seeded INVENTORY control node
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[], CommandType='Text', CommandTimeout='30']
+      SELECT CASE
+          WHEN EXISTS (
+              SELECT 1
+              FROM [control_accounts] AS [c]
+              WHERE [c].[ControlKind] = N'ACCOUNTS_PAYABLE') THEN CAST(1 AS bit)
+          ELSE CAST(0 AS bit)
+      END
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Seeded ACCOUNTS_PAYABLE control node
+info: Microsoft.EntityFrameworkCore.Database.Command[20101]
+      Executed DbCommand (1ms) [Parameters=[@p0='01a08f57-f9b3-78b5-9ad3-24cd685c6ef4', @p1='AST-CTL-INV' (Nullable = false) (Size = 40), @p2='INVENTORY' (Nullable = false) (Size = 40), @p3='2026-09-11T07:21:40.7533688Z', @p4='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p5='True', @p6='01a08f57-f979-7d6c-9008-2dd0bb69b5cd', @p7='Inventory Control Account' (Nullable = false) (Size = 100), @p8=NULL (DbType = DateTime2), @p9=NULL (DbType = Guid), @p10='01a08f57-f9dc-76db-aedb-1da5b8cdc132', @p11='LIA-CTL-AP' (Nullable = false) (Size = 40), @p12='ACCOUNTS_PAYABLE' (Nullable = false) (Size = 40), @p13='2026-09-11T07:21:40.7533688Z', @p14='01a08f57-f3d6-7caf-99d4-5fb49cda1dd1', @p15='True', @p16='01a08f57-f9a4-7562-b814-200f0a101552', @p17='Accounts Payable Control Account' (Nullable = false) (Size = 100), @p18=NULL (DbType = DateTime2), @p19=NULL (DbType = Guid)], CommandType='Text', CommandTimeout='30']
+      SET IMPLICIT_TRANSACTIONS OFF;
+      SET NOCOUNT ON;
+      INSERT INTO [control_accounts] ([Id], [Code], [ControlKind], [InsertDate], [InsertUserId], [IsActive], [MasterAccountId], [Title], [UpdateDate], [UpdateUserId])
+      VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9),
+      (@p10, @p11, @p12, @p13, @p14, @p15, @p16, @p17, @p18, @p19);
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Seed engine complete (actor=01a08f57-f3d6-7caf-99d4-5fb49cda1dd1)
+info: Xenasys.Persistence.Seeding.DatabaseSeeder[0]
+      Database initialization complete.
+dbug: Microsoft.Extensions.Hosting.Internal.Host[1]
+      Hosting starting
+info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[63]
+      User profile is available. Using 'C:\Users\X1\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:5099
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: C:\office\Xenasys\backend\src\Xenasys.Presentation
+dbug: Microsoft.Extensions.Hosting.Internal.Host[2]
+      Hosting started

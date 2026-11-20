@@ -1,0 +1,1074 @@
+/*
+ * SpreadsheetGrid theme
+ * — Client requirement: Excel look + Excel-style interaction
+ * — Enhancement: portal tokens (border / muted / primary / text)
+ * Keep full cell boxes — do not flatten into a plain HTML table.
+ */
+
+.sg-root {
+  --sg-border: var(--border);
+  --sg-grid: color-mix(in oklab, var(--border) 88%, var(--text-muted, #6b7280));
+  --sg-muted: var(--muted);
+  --sg-bg: var(--background);
+  --sg-card: var(--card);
+  --sg-text: var(--text-body);
+  --sg-heading: var(--text-heading);
+  --sg-label: var(--text-label);
+  --sg-muted-text: var(--text-muted);
+  --sg-error: var(--text-error);
+  --sg-primary: var(--primary);
+  width: 100%;
+  min-height: 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--sg-border) 80%, transparent);
+  border-radius: 0.5rem;
+  background: var(--sg-card);
+  box-shadow:
+    0 1px 2px rgb(15 23 42 / 0.04),
+    0 0 0 1px rgb(15 23 42 / 0.03);
+}
+
+/* Detail / content-sized sheets: height follows table (no flex fill / empty gap). */
+.sg-root.sg-root-fit-content {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow: visible;
+}
+
+.sg-root.sg-root-fit-content .sg-sheet {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  overflow-x: auto;
+  overflow-y: visible;
+  scrollbar-gutter: auto;
+  /* Let unused wheel deltas reach the modal/page scroller. */
+  overscroll-behavior: auto;
+}
+
+.sg-root.sg-root-fit-content .sg-host {
+  flex: 0 0 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.sg-root.sg-root-fit-content .jexcel_content,
+.sg-root.sg-root-fit-content .jss_content,
+.sg-root.sg-root-fit-content .jexcel_container,
+.sg-root.sg-root-fit-content .jss_container {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.sg-chrome-toolbar,
+.sg-chrome-footer {
+  padding: 0.5rem 0.65rem;
+  background: color-mix(in oklab, var(--sg-muted) 45%, var(--sg-card));
+  color: var(--sg-text);
+  font-size: 0.8125rem;
+}
+
+.sg-chrome-toolbar {
+  border-bottom: 1px solid var(--sg-grid);
+  padding: 0.4rem 0.5rem;
+}
+
+.sg-chrome-footer {
+  border-top: 1px solid var(--sg-grid);
+}
+
+/* —— Full Excel-style React toolbar —— */
+.sg-full-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.4rem;
+  min-width: 0;
+}
+
+.sg-full-toolbar-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.sg-full-toolbar-sep {
+  width: 1px;
+  align-self: stretch;
+  min-height: 1.5rem;
+  margin: 0 0.15rem;
+  background: color-mix(in oklab, var(--sg-border) 85%, transparent);
+}
+
+.sg-full-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-width: 1.75rem;
+  height: 1.75rem;
+  padding: 0 0.35rem;
+  border: 1px solid transparent;
+  border-radius: 0.3rem;
+  background: transparent;
+  color: var(--sg-heading, var(--sg-text));
+  cursor: pointer;
+  line-height: 0;
+}
+
+.sg-full-toolbar-btn:hover:not(:disabled) {
+  background: color-mix(in oklab, var(--sg-primary) 10%, transparent);
+  border-color: color-mix(in oklab, var(--sg-primary) 25%, transparent);
+}
+
+.sg-full-toolbar-btn.is-active {
+  background: color-mix(in oklab, var(--sg-primary) 14%, transparent);
+  border-color: color-mix(in oklab, var(--sg-primary) 35%, transparent);
+  color: var(--sg-primary);
+}
+
+.sg-full-toolbar-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sg-full-toolbar-btn-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.sg-full-toolbar-search {
+  gap: 0.3rem;
+  min-width: 0;
+  padding: 0 0.25rem;
+  border: 1px solid var(--sg-grid);
+  border-radius: 0.35rem;
+  background: var(--sg-bg, var(--sg-card));
+  height: 1.75rem;
+}
+
+.sg-full-toolbar-search-input {
+  min-width: 7rem;
+  width: 10rem;
+  max-width: 28vw;
+  height: 100%;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--sg-text);
+  font: inherit;
+  font-size: 0.75rem;
+}
+
+.sg-full-toolbar-popover-wrap {
+  position: relative;
+}
+
+.sg-full-toolbar-swatches {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: repeat(3, 1.35rem);
+  gap: 0.3rem;
+  padding: 0.4rem;
+  border: 1px solid var(--sg-grid);
+  border-radius: 0.4rem;
+  background: var(--sg-card);
+  box-shadow: 0 8px 24px rgb(15 23 42 / 0.14);
+}
+
+.sg-full-toolbar-swatch {
+  width: 1.35rem;
+  height: 1.35rem;
+  border: 1px solid color-mix(in oklab, var(--sg-border) 80%, #000);
+  border-radius: 0.2rem;
+  cursor: pointer;
+  padding: 0;
+}
+
+.sg-full-toolbar-swatch:hover {
+  outline: 2px solid var(--sg-primary);
+  outline-offset: 1px;
+}
+
+.sg-full-toolbar-trailing {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--sg-muted-text);
+}
+
+/* CE built-in search/pagination strip — hide when React full-toolbar owns Find */
+.sg-root:has(.sg-full-toolbar) div.jss_filter {
+  display: none !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  visibility: hidden !important;
+}
+
+.sg-root:has(.sg-full-toolbar) .jss_search,
+.sg-root:has(.sg-full-toolbar) .jexcel_search {
+  display: none !important;
+}
+
+.sg-root .jss_search,
+.sg-root .jexcel_search {
+  border-bottom: 1px solid var(--sg-grid) !important;
+  background: color-mix(in oklab, var(--sg-muted) 40%, var(--sg-card)) !important;
+  padding: 0.35rem 0.5rem !important;
+}
+
+.sg-root .jss_search input,
+.sg-root .jexcel_search input {
+  border: 1px solid var(--sg-grid) !important;
+  border-radius: 0.3rem !important;
+  background: var(--sg-bg, #fff) !important;
+  color: var(--sg-text) !important;
+  font: inherit !important;
+  font-size: 0.75rem !important;
+  padding: 0.25rem 0.45rem !important;
+}
+
+/*
+ * Column pixel widths own the sheet size:
+ * - default fit: widths sum ≈ container → no H-scroll / no trailing gap
+ * - user expand: sum > container → H-scroll
+ * - user collapse below default: sum < container → trailing gap (allowed)
+ */
+.sg-sheet {
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: auto;
+  /* Prevent clientWidth ↔ scrollbar feedback that reflows / blinks the grid. */
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: color-mix(in oklab, var(--sg-muted) 22%, var(--sg-card));
+  /* Isolate sticky thead so body cells cannot paint above the header. */
+  isolation: isolate;
+}
+
+.sg-sheet.sg-sheet-empty {
+  display: flex;
+  flex-direction: column;
+}
+
+.sg-root .sg-host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: auto;
+  overflow: visible;
+}
+
+.sg-root .jexcel_container,
+.sg-root .jss_container,
+.sg-root .jss_content {
+  /* Host follows the table's explicit pixel width from JS (not content min-width). */
+  width: auto !important;
+  max-width: none !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/*
+ * Excel grid: shared box edges without border-collapse:collapse.
+ * Collapse breaks position:sticky on thead cells (header overlaps body on scroll).
+ */
+.sg-root .jss_worksheet,
+.sg-root .jexcel {
+  width: auto;
+  min-width: 0 !important;
+  max-width: none !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+  border: 1px solid var(--sg-grid) !important;
+  font-family: inherit !important;
+  color: var(--sg-text) !important;
+  background: var(--sg-card) !important;
+  table-layout: fixed !important;
+}
+
+.sg-root .jss_worksheet col,
+.sg-root .jexcel col {
+  min-width: 0 !important;
+}
+
+/* —— Excel-style column header row (Category Listing chrome) —— */
+.sg-root .jss_worksheet > thead > tr:not(.jss_filter) > td,
+.sg-root .jexcel > thead > tr:not(.jss_filter) > td,
+.sg-root .jss_worksheet > thead > tr:not(.jss_filter) > th,
+.sg-root .jexcel > thead > tr:not(.jss_filter) > th {
+  background: #f3f5f9 !important;
+  color: #1a2238 !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
+  text-transform: none !important;
+  border: 1px solid #e8ecf2 !important;
+  border-bottom: 1px solid #d8dee8 !important;
+  /* max-width:0 is the classic fixed-table trick so ellipsis wins over text min-width. */
+  min-width: 0 !important;
+  max-width: 0 !important;
+  width: auto !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.25 !important;
+  padding: 0.55rem 0.55rem !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 6 !important;
+  box-shadow: 0 1px 0 #d8dee8;
+}
+
+/* Corner + column-letter / row-index gutter — Excel header chrome */
+.sg-root .jss_worksheet > thead > tr:not(.jss_filter) > td:first-child,
+.sg-root .jexcel > thead > tr:not(.jss_filter) > td:first-child,
+.sg-root .jss_worksheet > thead > tr:not(.jss_filter) > th:first-child,
+.sg-root .jexcel > thead > tr:not(.jss_filter) > th:first-child {
+  max-width: none !important;
+  text-align: center !important;
+  color: #64748b !important;
+  background: #eef1f6 !important;
+  z-index: 7 !important;
+}
+
+/*
+ * CE native filter row — hide hard (we remove it in JS; this is a safety net
+ * if CE re-inserts it after setData / refresh).
+ */
+.sg-root .jss_worksheet.sg-has-excel-filters > thead > tr.jss_filter,
+.sg-root .jexcel.sg-has-excel-filters > thead > tr.jss_filter,
+.sg-root .jss_worksheet > thead > tr.jss_filter,
+.sg-root .jexcel > thead > tr.jss_filter {
+  display: none !important;
+  height: 0 !important;
+  max-height: 0 !important;
+  line-height: 0 !important;
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.sg-root .jss_worksheet > thead > tr.jss_filter > td,
+.sg-root .jexcel > thead > tr.jss_filter > td {
+  display: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+.sg-root .jss_worksheet > thead > tr:not(.jss_filter) > td.sg-header-with-filter,
+.sg-root .jexcel > thead > tr:not(.jss_filter) > td.sg-header-with-filter {
+  padding-right: 2.55rem !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 6 !important;
+}
+
+.sg-root .sg-excel-sort {
+  position: absolute;
+  right: 1.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  z-index: 8;
+  line-height: 0;
+}
+
+.sg-root .sg-excel-sort:hover,
+.sg-root .sg-excel-sort-active {
+  color: #2563eb;
+  background: color-mix(in oklab, #2563eb 12%, transparent);
+}
+
+.sg-root .sg-excel-filter {
+  position: absolute;
+  right: 0.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  z-index: 8;
+  line-height: 0;
+}
+
+.sg-root .sg-excel-filter:hover,
+.sg-root .sg-excel-filter-active {
+  color: #2563eb;
+  background: color-mix(in oklab, #2563eb 12%, transparent);
+}
+
+.sg-root .jss_worksheet > tbody > tr.sg-row-filtered-out,
+.sg-root .jexcel > tbody > tr.sg-row-filtered-out,
+.sg-root .jss_worksheet > tbody > tr.sg-row-search-hidden,
+.sg-root .jexcel > tbody > tr.sg-row-search-hidden {
+  display: none !important;
+}
+
+/*
+ * Google Sheets-style column filter/sort menu — portaled to body (never clipped by sheet).
+ */
+.sg-col-menu {
+  position: fixed;
+  z-index: 2147483000;
+  box-sizing: border-box;
+  max-width: min(320px, calc(100vw - 16px));
+  max-height: min(420px, calc(100vh - 16px));
+  display: flex;
+  flex-direction: column;
+  padding: 0.35rem 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--border, #d1d5db) 90%, #000);
+  border-radius: 0.5rem;
+  background: var(--card, var(--background, #fff));
+  color: var(--text-body, #111827);
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.18);
+  font-size: 0.8125rem;
+  line-height: 1.25;
+}
+
+.sg-col-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  margin: 0;
+  padding: 0.55rem 0.85rem;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+
+.sg-col-menu-item:hover {
+  background: color-mix(in oklab, var(--muted, #f3f4f6) 80%, transparent);
+}
+
+.sg-col-menu-item-primary {
+  font-weight: 600;
+  color: var(--primary, #2563eb);
+}
+
+.sg-col-menu-ico {
+  flex: 0 0 1.75rem;
+  width: 1.75rem;
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-muted, #6b7280);
+  opacity: 0.95;
+  white-space: nowrap;
+}
+
+.sg-col-menu-sep {
+  height: 1px;
+  margin: 0.3rem 0;
+  background: color-mix(in oklab, var(--border, #e5e7eb) 90%, transparent);
+}
+
+.sg-col-menu-heading {
+  padding: 0.4rem 0.85rem 0.2rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted, #6b7280);
+}
+
+.sg-col-menu-search-wrap {
+  padding: 0.35rem 0.75rem 0.45rem;
+}
+
+.sg-col-menu-search {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid color-mix(in oklab, var(--border, #d1d5db) 90%, #000);
+  border-radius: 0.375rem;
+  background: var(--background, #fff);
+  color: inherit;
+  font: inherit;
+  outline: none;
+}
+
+.sg-col-menu-search:focus {
+  border-color: color-mix(in oklab, var(--primary, #2563eb) 65%, var(--border, #d1d5db));
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--primary, #2563eb) 22%, transparent);
+}
+
+.sg-col-menu-search::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+
+.sg-col-menu-search-empty {
+  padding: 0.65rem 0.85rem;
+  color: var(--text-muted, #6b7280);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.sg-col-menu-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.28rem 0.85rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sg-col-menu-check-all {
+  font-weight: 600;
+}
+
+.sg-col-menu-check span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sg-col-menu-check input {
+  flex: 0 0 auto;
+  width: 0.9rem;
+  height: 0.9rem;
+  accent-color: var(--primary, #2563eb);
+}
+
+.sg-col-menu-values {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 180px;
+  overflow: auto;
+  padding: 0.15rem 0 0.35rem;
+  border-top: 1px solid color-mix(in oklab, var(--border, #e5e7eb) 70%, transparent);
+  border-bottom: 1px solid color-mix(in oklab, var(--border, #e5e7eb) 70%, transparent);
+}
+
+/* Header: editable vs read-only (title row only) */
+.sg-root .jss_worksheet > thead > tr:not(.jss_filter) > td.sg-col-editable,
+.sg-root .jexcel > thead > tr:not(.jss_filter) > td.sg-col-editable {
+  background: color-mix(in oklab, #2563eb 10%, #f3f5f9) !important;
+  color: #1a2238 !important;
+  border-color: color-mix(in oklab, #2563eb 40%, #e8ecf2) !important;
+  box-shadow: inset 0 -2px 0 0 #2563eb;
+}
+
+.sg-root .jss_worksheet > thead > tr:not(.jss_filter) > td.sg-col-readonly,
+.sg-root .jexcel > thead > tr:not(.jss_filter) > td.sg-col-readonly {
+  background: #f3f5f9 !important;
+  color: #1a2238 !important;
+}
+
+/* CE adds underline on sorted column headers (arrow-up / arrow-down) — remove it. */
+.sg-root .jss_worksheet > thead > tr > td.arrow-up,
+.sg-root .jss_worksheet > thead > tr > td.arrow-down,
+.sg-root .jexcel > thead > tr > td.arrow-up,
+.sg-root .jexcel > thead > tr > td.arrow-down {
+  text-decoration: none !important;
+}
+
+/* CE underlines <a> in cells — keep plain text look for product names, etc. */
+.sg-root .jss_worksheet > tbody > tr > td > a,
+.sg-root .jexcel > tbody > tr > td > a {
+  text-decoration: none !important;
+  color: inherit !important;
+}
+
+/* Ensure resize affordance is available across title header cells */
+.sg-root .jss_worksheet > thead > tr:not(.jss_filter) > td,
+.sg-root .jexcel > thead > tr:not(.jss_filter) > td {
+  user-select: none;
+}
+
+/* —— Excel cell boxes (themed grid lines) —— */
+.sg-root .jss_worksheet > tbody > tr > td,
+.sg-root .jexcel > tbody > tr > td {
+  border: 1px solid var(--sg-grid) !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.2 !important;
+  padding: 0.15rem 0.35rem !important;
+  height: 1.65rem !important;
+  min-height: 1.65rem !important;
+  max-height: 1.65rem !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  width: auto !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  color: var(--sg-text) !important;
+  background: var(--sg-card) !important;
+  box-sizing: border-box !important;
+}
+
+.sg-root .jss_worksheet > tbody > tr > td:first-child,
+.sg-root .jexcel > tbody > tr > td:first-child {
+  max-width: none !important;
+  text-align: center !important;
+  font-size: 0.7rem !important;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--sg-muted-text) !important;
+  background: color-mix(in oklab, var(--sg-muted) 75%, var(--sg-card)) !important;
+}
+
+/* Controls must not be crushed by the ellipsis max-width trick. */
+.sg-root .jss_worksheet > tbody > tr > td:has(.sg-action-btn),
+.sg-root .jexcel > tbody > tr > td:has(.sg-action-btn),
+.sg-root .jss_worksheet > tbody > tr > td:has(.sg-link-btn),
+.sg-root .jexcel > tbody > tr > td:has(.sg-link-btn),
+.sg-root .jss_worksheet > tbody > tr > td:has(.sg-dt-actions-mount),
+.sg-root .jexcel > tbody > tr > td:has(.sg-dt-actions-mount),
+.sg-root .jss_worksheet > tbody > tr > td.sg-dt-actions-cell,
+.sg-root .jexcel > tbody > tr > td.sg-dt-actions-cell,
+.sg-root .jss_worksheet > tbody > tr > td:has(input[type='checkbox']),
+.sg-root .jexcel > tbody > tr > td:has(input[type='checkbox']) {
+  max-width: none !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* DataTable React text cells: clip like normal cells (do not spill into next column). */
+.sg-root .jss_worksheet > tbody > tr > td:has(.sg-dt-cell-mount),
+.sg-root .jexcel > tbody > tr > td:has(.sg-dt-cell-mount),
+.sg-root .jss_worksheet > tbody > tr > td.sg-dt-react-cell,
+.sg-root .jexcel > tbody > tr > td.sg-dt-react-cell {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* DataTable React action icons need room vertically (buttons + padding). */
+.sg-root .jss_worksheet > tbody > tr > td:has(.sg-dt-actions-mount),
+.sg-root .jexcel > tbody > tr > td:has(.sg-dt-actions-mount),
+.sg-root .jss_worksheet > tbody > tr > td.sg-dt-actions-cell,
+.sg-root .jexcel > tbody > tr > td.sg-dt-actions-cell {
+  height: auto !important;
+  min-height: 1.65rem !important;
+  max-height: none !important;
+  white-space: normal !important;
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+  /* Let Tailwind text-* on buttons win over the worksheet cell color. */
+  color: unset !important;
+}
+
+.sg-root .sg-dt-actions-mount {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  /* Keep dropdown menus (e.g. line export) visible; strip uses reserved slot widths. */
+  overflow: visible !important;
+}
+
+/* Reserved icon slots must not shrink or spill into the next data column. */
+.sg-root .sg-dt-actions-mount [data-action-slots] {
+  flex-shrink: 0 !important;
+  max-width: 100% !important;
+}
+
+.sg-root .sg-dt-cell-mount {
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.sg-root .sg-dt-cell-mount > * {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.sg-root .sg-dt-actions-mount button,
+.sg-root .sg-dt-actions-mount a,
+.sg-root .sg-dt-actions-mount svg {
+  flex-shrink: 0;
+  max-width: none !important;
+  overflow: visible !important;
+}
+
+/* Long labels (e.g. Service name) — show full text, wrap instead of ellipsis. */
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-full-text,
+.sg-root .jexcel > tbody > tr > td.sg-cell-full-text {
+  max-width: none !important;
+  height: auto !important;
+  min-height: 1.65rem !important;
+  max-height: none !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  word-break: break-word;
+  line-height: 1.25 !important;
+  padding-top: 0.3rem !important;
+  padding-bottom: 0.3rem !important;
+  vertical-align: middle !important;
+}
+
+/* Full label on one line (e.g. vendor name) — no wrap, no ellipsis. */
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-nowrap-full,
+.sg-root .jexcel > tbody > tr > td.sg-cell-nowrap-full {
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Booking datetime / sheet date in spreadsheet cells — text only; picker portaled on click. */
+.sg-root .jss_worksheet > tbody > tr > td:has(.sg-booking-dt-mount),
+.sg-root .jexcel > tbody > tr > td:has(.sg-booking-dt-mount),
+.sg-root .jss_worksheet > tbody > tr > td:has(.sg-sheet-date-mount),
+.sg-root .jexcel > tbody > tr > td:has(.sg-sheet-date-mount) {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 0.1rem 0.25rem !important;
+}
+
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-editable:has(.sg-booking-dt-mount),
+.sg-root .jexcel > tbody > tr > td.sg-cell-editable:has(.sg-booking-dt-mount),
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-editable:has(.sg-sheet-date-mount),
+.sg-root .jexcel > tbody > tr > td.sg-cell-editable:has(.sg-sheet-date-mount) {
+  cursor: pointer !important;
+}
+
+.sg-root .sg-booking-dt-mount,
+.sg-root .sg-sheet-date-mount {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.sg-root .sg-sheet-datetime-trigger {
+  font: inherit;
+  line-height: inherit;
+  color: inherit;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Editable cells: white Excel “input” surface + highlighted borders */
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-editable,
+.sg-root .jexcel > tbody > tr > td.sg-cell-editable {
+  background: var(--sg-bg) !important;
+  color: var(--sg-text) !important;
+  border-color: color-mix(in oklab, var(--sg-primary) 50%, var(--sg-grid)) !important;
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--sg-primary) 22%, transparent);
+  cursor: text;
+}
+
+/* Selection checkbox cells must stay clickable even inside locked sheets. */
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-select,
+.sg-root .jexcel > tbody > tr > td.sg-cell-select {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  background: var(--sg-card) !important;
+}
+
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-select input.sg-select-cb,
+.sg-root .jexcel > tbody > tr > td.sg-cell-select input.sg-select-cb {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  width: 1rem;
+  height: 1rem;
+}
+
+/* Read-only cells: Excel locked-cell tint */
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-readonly,
+.sg-root .jexcel > tbody > tr > td.sg-cell-readonly,
+.sg-root .jss_worksheet > tbody > tr > td.readonly,
+.sg-root .jexcel > tbody > tr > td.readonly {
+  background: color-mix(in oklab, var(--sg-muted) 55%, var(--sg-card)) !important;
+  color: var(--sg-label) !important;
+  border-color: var(--sg-grid) !important;
+  box-shadow: none !important;
+  cursor: default !important;
+}
+
+/* Active selection — Excel-like focus ring in portal primary */
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-editable.highlight,
+.sg-root .jexcel > tbody > tr > td.sg-cell-editable.highlight,
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-editable.jss_highlight,
+.sg-root .jexcel > tbody > tr > td.sg-cell-editable.jss_highlight {
+  background: color-mix(in oklab, var(--sg-primary) 10%, var(--sg-bg)) !important;
+  box-shadow: inset 0 0 0 2px var(--sg-primary) !important;
+  z-index: 1;
+}
+
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-editable.highlight-top,
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-editable.highlight-right,
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-editable.highlight-bottom,
+.sg-root .jss_worksheet > tbody > tr > td.sg-cell-editable.highlight-left,
+.sg-root .jexcel > tbody > tr > td.sg-cell-editable.highlight-top,
+.sg-root .jexcel > tbody > tr > td.sg-cell-editable.highlight-right,
+.sg-root .jexcel > tbody > tr > td.sg-cell-editable.highlight-bottom,
+.sg-root .jexcel > tbody > tr > td.sg-cell-editable.highlight-left {
+  border-color: var(--sg-primary) !important;
+  box-shadow: inset 0 0 0 1px var(--sg-primary) !important;
+}
+
+/* Keep CE selection border themed when present */
+.sg-root .jss_worksheet .highlight-top,
+.sg-root .jexcel .highlight-top {
+  border-top-color: var(--sg-primary) !important;
+}
+.sg-root .jss_worksheet .highlight-right,
+.sg-root .jexcel .highlight-right {
+  border-right-color: var(--sg-primary) !important;
+}
+.sg-root .jss_worksheet .highlight-bottom,
+.sg-root .jexcel .highlight-bottom {
+  border-bottom-color: var(--sg-primary) !important;
+}
+.sg-root .jss_worksheet .highlight-left,
+.sg-root .jexcel .highlight-left {
+  border-left-color: var(--sg-primary) !important;
+}
+
+.sg-root .jss_corner,
+.sg-root .jexcel_corner {
+  background: var(--sg-primary) !important;
+  border-color: var(--sg-primary) !important;
+}
+
+.sg-root .sg-cell-error {
+  box-shadow: inset 0 0 0 1.5px var(--sg-error) !important;
+  background: color-mix(in oklab, var(--sg-error) 8%, var(--sg-bg)) !important;
+}
+
+.sg-field-errors {
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sg-field-errors p {
+  margin: 0;
+  font-size: 0.7rem;
+  line-height: 1.25;
+  color: var(--sg-error);
+}
+
+.sg-root .sg-row-dimmed {
+  opacity: 0.55;
+}
+
+/* Classic receiving: finished product group (expiry + confirm done). */
+.sg-root .sg-row-complete > td {
+  background: color-mix(in oklab, rgb(34 197 94) 12%, var(--sg-card)) !important;
+}
+.sg-root .sg-row-complete > td:first-child {
+  box-shadow: inset 3px 0 0 0 rgb(34 197 94);
+}
+
+.sg-root .sg-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0;
+  border-radius: 0.3rem;
+  background: transparent;
+  color: var(--destructive, #dc2626);
+  cursor: pointer;
+}
+
+.sg-root .sg-action-btn:hover {
+  background: color-mix(in oklab, var(--destructive, #dc2626) 10%, transparent);
+}
+
+.sg-root .sg-action-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.sg-root .sg-action-btn--primary {
+  color: var(--primary, #2563eb);
+}
+
+.sg-root .sg-action-btn--primary:hover {
+  background: color-mix(in oklab, var(--primary, #2563eb) 10%, transparent);
+}
+
+.sg-root .sg-action-btn--muted {
+  color: var(--text-muted, #64748b);
+}
+
+.sg-root .sg-action-btn--muted:hover {
+  background: color-mix(in oklab, var(--text-muted, #64748b) 12%, transparent);
+}
+
+.sg-root .sg-action-btn--request {
+  color: #b45309;
+}
+
+.sg-root .sg-action-btn--request:hover {
+  background: color-mix(in oklab, #b45309 12%, transparent);
+}
+
+.sg-root .sg-link-btn {
+  display: inline;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sg-primary);
+  font: inherit;
+  font-size: 0.8125rem;
+  line-height: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sg-root .sg-link-btn:hover {
+  color: color-mix(in oklab, var(--sg-primary) 80%, var(--sg-text));
+}
+
+.sg-root .sg-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 8rem;
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.sg-root input[type='checkbox'] {
+  width: 0.95rem;
+  height: 0.95rem;
+  accent-color: var(--sg-primary);
+}
+
+/* Native CE toolbar / filters sit inside the sheet host */
+.sg-root .jtoolbar,
+.sg-root .jss_toolbar {
+  border-bottom: 1px solid var(--sg-grid) !important;
+  background: color-mix(in oklab, var(--sg-muted) 40%, var(--sg-card)) !important;
+}
+
+/* —— Footer totals (Excel totals row + theme) —— */
+.sg-root .jss_worksheet tfoot td,
+.sg-root .jexcel tfoot td {
+  background: color-mix(in oklab, var(--sg-muted) 70%, var(--sg-card)) !important;
+  font-weight: 700 !important;
+  font-size: 0.75rem !important;
+  color: var(--sg-heading) !important;
+  border: 1px solid var(--sg-grid) !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 2 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  padding: 0.35rem 0.35rem !important;
+  font-variant-numeric: tabular-nums;
+}
+
+.sg-root .jss_worksheet tfoot td.sg-footer-cell,
+.sg-root .jexcel tfoot td.sg-footer-cell {
+  text-align: center;
+}
+
+.sg-root .jss_worksheet tfoot td:first-child,
+.sg-root .jexcel tfoot td:first-child {
+  background: color-mix(in oklab, var(--sg-muted) 85%, var(--sg-card)) !important;
+  color: var(--sg-muted-text) !important;
+}
+
+/*
+ * Selection landed on readonly column(s): keep the selection in the model
+ * (so navigation does not skip over them), but hide the visible selection chrome.
+ */
+.sg-root.sg-selection-on-readonly .jss_worksheet .highlight,
+.sg-root.sg-selection-on-readonly .jexcel .highlight,
+.sg-root.sg-selection-on-readonly .jss_worksheet .selection,
+.sg-root.sg-selection-on-readonly .jexcel .selection {
+  background-color: transparent !important;
+}
+
+.sg-root.sg-selection-on-readonly .jss_worksheet .highlight-top,
+.sg-root.sg-selection-on-readonly .jss_worksheet .highlight-right,
+.sg-root.sg-selection-on-readonly .jss_worksheet .highlight-bottom,
+.sg-root.sg-selection-on-readonly .jss_worksheet .highlight-left,
+.sg-root.sg-selection-on-readonly .jexcel .highlight-top,
+.sg-root.sg-selection-on-readonly .jexcel .highlight-right,
+.sg-root.sg-selection-on-readonly .jexcel .highlight-bottom,
+.sg-root.sg-selection-on-readonly .jexcel .highlight-left,
+.sg-root.sg-selection-on-readonly .jss_worksheet .selection-top,
+.sg-root.sg-selection-on-readonly .jss_worksheet .selection-right,
+.sg-root.sg-selection-on-readonly .jss_worksheet .selection-bottom,
+.sg-root.sg-selection-on-readonly .jss_worksheet .selection-left {
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.sg-root.sg-selection-on-readonly .jss_corner,
+.sg-root.sg-selection-on-readonly .jexcel_corner {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

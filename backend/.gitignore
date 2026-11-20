@@ -1,0 +1,28 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+*.DotSettings.user
+
+## Secrets / local
+appsettings.*.local.json
+*.pfx
+*.key
+.env
+.env.*
+
+## Build / test
+TestResults/
+coverage/
+*.log
+seed-out.txt
+seed-err.txt
+
+## OS / IDE
+.DS_Store
+Thumbs.db
+.idea/

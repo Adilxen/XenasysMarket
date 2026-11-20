@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Xenasys.Core/Xenasys.Core.csproj" />
+    <Project Path="src/Xenasys.Infrastructure/Xenasys.Infrastructure.csproj" />
+    <Project Path="src/Xenasys.Persistence/Xenasys.Persistence.csproj" />
+    <Project Path="src/Xenasys.Presentation/Xenasys.Presentation.csproj" />
+  </Folder>
+</Solution>
