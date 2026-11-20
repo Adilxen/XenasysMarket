@@ -95,9 +95,14 @@ public sealed class ProductCodeAllocator : IProductCodeAllocator
             }
         }
 
+        // CompanyId is the primary key and the tenant foreign key. EF only accepts
+        // that value when the principal Tenant is tracked via the navigation.
+        var company = await _db.Tenants
+            .FirstAsync(t => t.Id == companyId, cancellationToken);
+
         _db.ProductCodeSequences.Add(new ProductCodeSequence
         {
-            CompanyId = companyId,
+            Company = company,
             LastValue = bootstrap,
         });
 

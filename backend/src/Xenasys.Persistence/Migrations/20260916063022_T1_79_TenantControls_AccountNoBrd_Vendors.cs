@@ -11,12 +11,12 @@ namespace Xenasys.Persistence.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Drop only the single-column unique index. AlterColumn below rebuilds
+            // IX_SubsidiaryAccounts_CompanyId_AccountNo itself; dropping it here makes that DROP fail.
             migrationBuilder.Sql(
                 """
                 IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_SubsidiaryAccounts_AccountNo' AND object_id = OBJECT_ID(N'SubsidiaryAccounts'))
                     DROP INDEX [IX_SubsidiaryAccounts_AccountNo] ON [SubsidiaryAccounts];
-                IF EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_SubsidiaryAccounts_CompanyId_AccountNo' AND object_id = OBJECT_ID(N'SubsidiaryAccounts'))
-                    DROP INDEX [IX_SubsidiaryAccounts_CompanyId_AccountNo] ON [SubsidiaryAccounts];
                 """);
 
             migrationBuilder.DropIndex(

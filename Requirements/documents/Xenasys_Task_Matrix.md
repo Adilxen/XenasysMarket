@@ -399,6 +399,8 @@ Treat as automatic **Failed** pre-check if the change would:
 | T5.3 | M5 Notify Center | Header bell Notification Center + ringtone on new low-stock; poll stock.alerts | Passed | No |
 | T3.8 | M3 Product Image | Product ImagePath mandatory JPG/PNG ≤2MB multipart (Category clone) | Passed | No |
 | T3.9 | M3 Barcode | Optional barcode; format alnum/hyphen/commas; tenant-unique tokens; empty → auto-gen from ProductCode | Passed | No |
+| RUN-01 | M1 Migration | Local startup: T1_79 must not DROP IX_SubsidiaryAccounts_CompanyId_AccountNo before AlterColumn rebuilds it | Passed | No |
+| RUN-02 | M3 Seed | ProductCodeSequence PK is also the tenant FK; seed and allocator must set Company navigation | Passed | No |
 | | | | | |
 
 ### 3.3 Architectural exception flag format (when Failed)
